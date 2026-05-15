@@ -1,0 +1,7 @@
+discord.py
+aiohttp
+easyocr
+Pillow
+python-dotenv
+imagehash
+numpy

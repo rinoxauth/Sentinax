@@ -1,0 +1,18 @@
+{
+  "delete_messages": true,
+  "log_channel_id": null,
+  "ignored_roles": [],
+  "blocked_server_names": [
+    "cracked vault"
+  ],
+  "scam_keywords": [
+    "withdrawal success",
+    "rackswin",
+    "claim your reward",
+    "crypto casino",
+    "giving away \\$",
+    "vyro project",
+    "free.*usdt",
+    "withdrawal of \\$.*was success"
+  ]
+}
