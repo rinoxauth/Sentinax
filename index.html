@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinax | The Ultimate AI-Powered Discord Guardian</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Sentinax is an advanced AI-powered Discord security bot featuring OCR scam detection, phishing protection, and professional moderation tools.">
+    <meta name="keywords" content="Discord Bot, Security Bot, OCR, Scam Detection, Phishing Protection, Moderation, Sentinax">
+    
+    <!-- Google Fonts: Inter & Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #030305;
+            --surface: #0a0a0f;
+            --primary: #5865F2;
+            --primary-glow: rgba(88, 101, 242, 0.4);
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .logo {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Background Effects */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .blob {
+            position: fixed;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(110%, 110%); }
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 1rem 5%;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -1px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: var(--transition-smooth);
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5);
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        #particles-js {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            background: radial-gradient(circle at center, #11111d 0%, var(--bg) 100%);
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-dim);
+            max-width: 750px;
+            margin: 0 auto 3rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-main {
+            padding: 1.2rem 2.8rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-outline {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Stats */
+        .stats {
+            padding: 80px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: -100px auto 0;
+            position: relative;
+            z-index: 20;
+        }
+
+        .stat-card {
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 24px;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .stat-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .stat-card h2 { font-size: 3rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .stat-card p { color: var(--text-dim); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+
+        /* Sections General */
+        section { padding: 120px 5%; max-width: 1300px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 5rem; }
+        .section-header h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1.5rem; }
+        .section-header p { color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 3.5rem 2.5rem;
+            border-radius: 32px;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, var(--primary-glow), transparent 60%);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .f-icon {
+            width: 70px; height: 70px;
+            background: rgba(88, 101, 242, 0.1);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card h3 { font-size: 1.6rem; margin-bottom: 1rem; position: relative; z-index: 2; }
+        .feature-card p { color: var(--text-dim); position: relative; z-index: 2; }
+
+        /* Commands Tabs */
+        .commands-container {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--glass-border);
+            overflow-x: auto;
+        }
+
+        .tab-trigger {
+            padding: 1.8rem 2.5rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .tab-trigger.active {
+            color: var(--primary);
+            background: rgba(88, 101, 242, 0.05);
+            box-shadow: inset 0 -3px 0 var(--primary);
+        }
+
+        .tab-panel { padding: 4rem; display: none; animation: slideUp 0.6s ease; }
+        .tab-panel.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cmd-grid { display: grid; gap: 2rem; }
+        .cmd-row {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            padding: 2rem;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            align-items: center;
+        }
+
+        .cmd-name {
+            font-family: monospace;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .cmd-info { color: var(--text-dim); }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+            position: relative;
+        }
+
+        .step { text-align: center; position: relative; }
+        .step-num {
+            width: 80px; height: 80px;
+            background: var(--bg);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 2rem;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        /* FAQ */
+        .faq-grid { max-width: 800px; margin: 0 auto; display: grid; gap: 1rem; }
+        .faq-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .faq-item:hover { border-color: var(--primary); }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .faq-answer { height: 0; overflow: hidden; color: var(--text-dim); margin-top: 0; transition: var(--transition-smooth); }
+        .faq-item.active .faq-answer { height: auto; margin-top: 1rem; }
+        .faq-item.active i { transform: rotate(180deg); color: var(--primary); }
+
+        /* Footer */
+        footer {
+            background: var(--surface);
+            padding: 100px 5% 50px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 5rem;
+            margin-bottom: 80px;
+        }
+
+        .footer-info h2 { margin-bottom: 1.5rem; }
+        .footer-info p { color: var(--text-dim); margin-bottom: 2rem; max-width: 350px; }
+        
+        .socials { display: flex; gap: 1rem; }
+        .social-btn {
+            width: 45px; height: 45px;
+            background: var(--glass);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; text-decoration: none; transition: var(--transition-smooth);
+        }
+        .social-btn:hover { background: var(--primary); transform: translateY(-5px); }
+
+        .footer-col h4 { margin-bottom: 2rem; color: var(--primary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 1.2rem; }
+        .footer-col a { color: var(--text-dim); text-decoration: none; transition: var(--transition-smooth); }
+        .footer-col a:hover { color: white; padding-left: 8px; }
+
+        .footer-end {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 1024px) {
+            .footer-main { grid-template-columns: 1fr 1fr; gap: 3rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; top: 0; right: -100%;
+                width: 80%; height: 100vh;
+                background: var(--surface);
+                flex-direction: column;
+                justify-content: center;
+                transition: 0.5s;
+                border-left: 1px solid var(--glass-border);
+            }
+            .nav-links.active { right: 0; }
+            .mobile-toggle { display: block; }
+            .cmd-row { grid-template-columns: 1fr; gap: 1rem; }
+            .tab-panel { padding: 2rem; }
+            .hero h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+    <div class="blob"></div>
+
+    <nav id="navbar">
+        <a href="#" class="logo">
+            <i class="fas fa-shield-halved"></i> SENTINAX
+        </a>
+        <div class="nav-links" id="navMenu">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#commands">Commands</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands" class="nav-btn">Add Bot</a>
+        </div>
+        <div class="mobile-toggle" id="mobileBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <div class="hero" id="home">
+        <div id="particles-js"></div>
+        <div class="hero-content" data-aos="fade-up">
+            <span class="badge">Next-Gen Protection</span>
+            <h1>Protect Your Discord <br> Server with AI</h1>
+            <p>Advanced scam detection, phishing protection, and moderation tools powered by cutting-edge OCR technology. Experience the gold standard of community security.</p>
+            <div class="hero-actions">
+                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands" class="nav-btn btn-main">Add to Discord</a>
+                <a href="#commands" class="btn-main btn-outline">
+                    <i class="fas fa-terminal"></i> View Commands
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats" data-aos="fade-up">
+        <div class="stat-card">
+            <h2 class="counter" data-target="10000">0</h2>
+            <p>Servers Protected</p>
+        </div>
+        <div class="stat-card">
+            <h2 class="counter" data-target="500000">0</h2>
+            <p>Scams Blocked</p>
+        </div>
+        <div class="stat-card">
+            <h2 class="counter" data-target="2000000">0</h2>
+            <p>Images Scanned</p>
+        </div>
+    </div>
+
+    <section id="features">
+        <div class="section-header" data-aos="fade-up">
+            <span class="badge">Intelligence</span>
+            <h2>Core Security Suite</h2>
+            <p>Sentinax provides a comprehensive layer of protection for every type of Discord community.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="f-icon"><i class="fas fa-eye"></i></div>
+                <h3>OCR Scam Detection</h3>
+                <p>Industry-leading AI that extracts text from images to identify hidden scams and fraudulent giveaways in milliseconds.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="f-icon"><i class="fas fa-link-slash"></i></div>
+                <h3>Phishing Blocker</h3>
+                <p>Real-time database of millions of malicious URLs. Sentinax blocks fake Nitro gifts, Steam scams, and credential harvesters.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="f-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Anti-Spam Shield</h3>
+                <p>Smart behavioral analysis to detect and stop raid attempts and rapid-fire spam before they overwhelm your chat.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="f-icon"><i class="fas fa-hammer"></i></div>
+                <h3>Pro Moderation</h3>
+                <p>A complete set of tools for your staff. Kick, ban, mute, and purge messages with detailed logging and reason tracking.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="f-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Crypto Intelligence</h3>
+                <p>Integrated market data tools. Get live prices, 24h volume, and price changes for thousands of coins instantly.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="f-icon"><i class="fas fa-database"></i></div>
+                <h3>Audit Logs</h3>
+                <p>Never miss a thing. Sentinax logs message edits, deletions, and all security events to a dedicated channel.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="commands">
+        <div class="section-header" data-aos="fade-up">
+            <span class="badge">Commands</span>
+            <h2>Total Control</h2>
+            <p>Simple yet powerful slash commands to manage every aspect of your server security.</p>
+        </div>
+        <div class="commands-container" data-aos="fade-up">
+            <div class="tabs">
+                <button class="tab-trigger active" onclick="switchTab(event, 'scam-tab')">Security</button>
+                <button class="tab-trigger" onclick="switchTab(event, 'mod-tab')">Moderation</button>
+                <button class="tab-trigger" onclick="switchTab(event, 'crypto-tab')">Crypto</button>
+                <button class="tab-trigger" onclick="switchTab(event, 'util-tab')">Utility</button>
+            </div>
+            
+            <div id="scam-tab" class="tab-panel active">
+                <div class="cmd-grid">
+                    <div class="cmd-row">
+                        <span class="cmd-name">/scam fullscan</span>
+                        <span class="cmd-info">Deep scans channel history to purge existing scam content.</span>
+                    </div>
+                    <div class="cmd-row">
+                        <span class="cmd-name">/scam security</span>
+                        <span class="cmd-info">Provides a real-time security health report of the server.</span>
+                    </div>
+                    <div class="cmd-row">
+                        <span class="cmd-name">/scam badword</span>
+                        <span class="cmd-info">Manage the automated profanity and keyword filter list.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mod-tab" class="tab-panel">
+                <div class="cmd-grid">
+                    <div class="cmd-row">
+                        <span class="cmd-name">/mod ban</span>
+                        <span class="cmd-info">Permanently ban users with detailed reason logging.</span>
+                    </div>
+                    <div class="cmd-row">
+                        <span class="cmd-name">/mod mute</span>
+                        <span class="cmd-info">Apply timed-out restrictions to disruptive members.</span>
+                    </div>
+                    <div class="cmd-row">
+                        <span class="cmd-name">/mod clear</span>
+                        <span class="cmd-info">Bulk delete messages to clean up channel clutter.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="crypto-tab" class="tab-panel">
+                <div class="cmd-grid">
+                    <div class="cmd-row">
+                        <span class="cmd-name">/crypto price</span>
+                        <span class="cmd-info">Get real-time market data for any cryptocurrency coin.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="util-tab" class="tab-panel">
+                <div class="cmd-grid">
+                    <div class="cmd-row">
+                        <span class="cmd-name">/utility serverinfo</span>
+                        <span class="cmd-info">Detailed overview of server stats and configuration.</span>
+                    </div>
+                    <div class="cmd-row">
+                        <span class="cmd-name">/utility userinfo</span>
+                        <span class="cmd-info">Deep-dive into specific member account details and age.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works">
+        <div class="section-header" data-aos="fade-up">
+            <span class="badge">Workflow</span>
+            <h2>Simple Setup</h2>
+            <p>Get enterprise protection in less than 2 minutes.</p>
+        </div>
+        <div class="steps">
+            <div class="step" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-num">01</div>
+                <h4>Invite</h4>
+                <p>Add Sentinax to your server with one click.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-num">02</div>
+                <h4>Auto-Scan</h4>
+                <p>Bot begins monitoring channels and scanning images.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-num">03</div>
+                <h4>OCR Logic</h4>
+                <p>AI reads text in images to find hidden threats.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="400">
+                <div class="step-num">04</div>
+                <h4>Instant Ban</h4>
+                <p>Malicious actors are removed instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Common Questions</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item" data-aos="fade-up">
+                <div class="faq-question">How does OCR detection work? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Sentinax uses Optical Character Recognition to extract text from images sent in chat. It then compares this text against a vast database of scam keywords and phishing patterns.</div>
+            </div>
+            <div class="faq-item" data-aos="fade-up">
+                <div class="faq-question">Is it free to use? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Yes! Sentinax offers its core security and moderation features for free to help keep the Discord ecosystem safe.</div>
+            </div>
+            <div class="faq-item" data-aos="fade-up">
+                <div class="faq-question">Does it store my messages? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">No. Sentinax processes messages in real-time to detect threats and does not store private user data or message history.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-main">
+            <div class="footer-info">
+                <h2 class="logo"><i class="fas fa-shield-halved"></i> SENTINAX</h2>
+                <p>The next generation of Discord server security. Powered by AI, trusted by thousands of communities worldwide.</p>
+                <div class="socials">
+                    <a href="#" class="social-btn"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#home">Overview</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#commands">Commands</a></li>
+                    <li><a href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands">Invite Bot</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Support Server</a></li>
+                    <li><a href="#">Report Bug</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-end">
+            <p>&copy; 2024 Sentinax AI Guardian. Made with ❤️ for a safer internet.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Init AOS
+        AOS.init({ duration: 1000, once: true });
+
+        // Particles.js
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 100, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#5865F2" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.2, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#5865F2", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true }
+            },
+            "retina_detect": true
+        });
+
+        // Navbar Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // Tab Switcher
+        function switchTab(evt, tabId) {
+            const panels = document.querySelectorAll('.tab-panel');
+            const triggers = document.querySelectorAll('.tab-trigger');
+            
+            panels.forEach(p => p.classList.remove('active'));
+            triggers.forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // Mobile Menu
+        const mobileBtn = document.getElementById('mobileBtn');
+        const navMenu = document.getElementById('navMenu');
+        mobileBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileBtn.querySelector('i').classList.toggle('fa-bars');
+            mobileBtn.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+
+        // Counters
+        const counters = document.querySelectorAll('.counter');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const count = () => {
+                        const current = +counter.innerText.replace(/,/g, '');
+                        const increment = target / 100;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current + increment).toLocaleString();
+                            setTimeout(count, 20);
+                        } else {
+                            counter.innerText = target.toLocaleString() + '+';
+                        }
+                    };
+                    count();
+                    observer.unobserve(counter);
+                }
+            });
+        }, { threshold: 1 });
+        counters.forEach(c => observer.observe(c));
+    </script>
+</body>
+</html>
